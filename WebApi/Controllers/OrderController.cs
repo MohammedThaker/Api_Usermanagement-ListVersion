@@ -1,9 +1,10 @@
-﻿
+﻿/*
+using Application.DTOs.ResponseDTO;
 using Application.Interfaces;
-using Domain.Models;
+
+using Domain.IRepository;
+
 using Domain.Models.Request;
-using Infrastructure.Interfacies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -12,26 +13,33 @@ namespace WebApi.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        public readonly IAddUnitOfWork unitOftWork;
+        public readonly IBaseUnitOftWork unitOftWork;
+        public readonly IOrderService orderService;
 
-
-        public OrderController(IAddUnitOfWork unitOftWork)
+        public OrderController(IBaseUnitOftWork unitOftWork, IOrderService orderService)
         {
 
             this.unitOftWork = unitOftWork;
-
+            this.orderService = orderService;
         }
 
+       
 
         [HttpGet]
-        public IActionResult GetOrder(string type)
+        public IActionResult GetOrder()
         {
-            var Custpay = unitOftWork.GetAllOrder.GetAll();
+            try
+            {
+                var Custpay = unitOftWork.GetAllOrder.GetAll();
 
-            if (Custpay == null)
-                return NotFound(" Invalid Order Id");
-            return Ok(Custpay);
-
+                if (Custpay == null)
+                    return NotFound(" Invalid Order Id");
+                return Ok(Custpay);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -60,89 +68,36 @@ namespace WebApi.Controllers
 
 
         [HttpPost]
-        public IActionResult Setorder([FromBody] Order NewOrder)
+        public IActionResult Setorder([FromBody] OederResquestDTO NewOrder)
         {
 
-            if (String.IsNullOrEmpty(NewOrder.OrderNo))
+            *//*if (String.IsNullOrEmpty(NewOrder.OrderNo))
             {
-                return BadRequest(new { ErrorCode = 501, ErrorMessage = " Invalid Order name" });
+                return BadRequest(new { ErrorCode = 400, ErrorMessage = " Invalid Order name" });
 
-            }
+            }*//*
 
-
-            unitOftWork.AddOrder.Add(NewOrder);
-
-
-            unitOftWork.Complete();
-         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            orderService.CreateOrder(NewOrder);
 
             return Ok(NewOrder);
 
-
-
-
         }
 
-
-
-
-
-
-
-
         [HttpPut("Id")]
-        public IActionResult UpdateOrder(int Id, [FromBody] Order NewOrder)
+        public IActionResult UpdateOrder(int Id, [FromBody] ProductOrder NewOrder)
         {
 
 
-            var PaymentUpdate = unitOftWork.GetPayments.GetByIdi(Id);
+            var UpdateOrder = unitOftWork.GetOrderById.GetByIdi(Id);
 
-            if (PaymentUpdate == null)
+            if (UpdateOrder == null)
                 return NotFound($"Movie with Id = {Id} not found");
 
-/*            PaymentUpdate.PaymentTypy = NewOrder.OrderNo;
-*/
+            UpdateOrder.OrderNo = NewOrder.OrderNo;
+
 
             unitOftWork.Complete();
-            return Ok(PaymentUpdate);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            return Ok(UpdateOrder);
         }
         [HttpDelete("Id")]
         public IActionResult RemoveById(int Id)
@@ -169,3 +124,4 @@ namespace WebApi.Controllers
         }
     }
 }
+*/
